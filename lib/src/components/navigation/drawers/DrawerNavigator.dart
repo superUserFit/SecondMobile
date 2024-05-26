@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:e_pod/src/screens/home/HomeScreen.dart';
+import 'package:e_pod/src/screens/job_order/JobOrderScreen.dart';
 
 import 'DrawerItem.dart';
 
@@ -13,12 +14,29 @@ class DrawerNavigator extends StatelessWidget {
         color: Colors.white,
         child: Column(
           children: [
+            const UserAccountsDrawerHeader(
+              accountName: Text('Fitenson'),
+              accountEmail: Text('fitenson@infollective.com'),
+              currentAccountPicture: CircleAvatar(
+                radius: 60,
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.orange, Colors.deepOrange],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
             DrawerItem(
               icon: Icons.home,
               name: 'Home',
               onPressed: () => onItemPressed(context, index: 0),
             ),
-            // Add more DrawerItems as needed
+            DrawerItem(
+              icon: Icons.business_center_rounded,
+              name: 'Job Order',
+              onPressed: () => onItemPressed(context, index: 1))
           ],
         ),
       ),
@@ -31,7 +49,14 @@ class DrawerNavigator extends StatelessWidget {
       case 0:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) =>  const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+        break;
+
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const JobOrderScreen()),
         );
         break;
     }

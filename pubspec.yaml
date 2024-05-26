@@ -31,6 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
   getwidget: ^4.0.0
+  http: ^1.2.1
+  timelines: ^0.1.0
 
 dev_dependencies:
   flutter_test:

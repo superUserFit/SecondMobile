@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:e_pod/src/components/navigation/drawers/DrawerNavigator.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   int selectedTabPage = 0;
 
   @override
@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: const Center(
-        child: Text('Welcome to the Home Screen'),
+        child: Text('This is Profile Screen'),
       ),
     );
   }

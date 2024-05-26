@@ -1,4 +1,4 @@
-import 'package:e_pod/src/screens/home/HomeScreen.dart';
+import 'package:e_pod/App.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,10 +10,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.deepOrange,
       ),
-      home: HomeScreen(),
+      home: const AppScreen(),
     );
   }
 }

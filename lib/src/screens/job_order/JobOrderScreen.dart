@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:e_pod/src/components/navigation/drawers/DrawerNavigator.dart';
 import 'package:e_pod/src/components/navigation/tabs/BottomTabNavigator.dart';
 import 'package:e_pod/src/screens/job_order/widgets/Card.dart';
+import 'package:e_pod/src/components/api/Request.dart';
 
 class JobOrderScreen extends StatefulWidget {
   const JobOrderScreen({Key? key}) : super(key: key);
@@ -13,32 +14,7 @@ class JobOrderScreen extends StatefulWidget {
 class _JobOrderScreenState extends State<JobOrderScreen> {
   int selectedJobStatus = 0;
   int selectedTabPage = 0;
-
-  final List<Map<String, String>> jobOrders = [
-    {
-      'customerName': 'Line Clear Express & Logistics',
-      'docNo': 'JQ2401',
-      'pickupLocation': 'Md LocB',
-      'pickupAddress': 'No. 99, Taman 999, Jalan 9999, 99999 Kuching, Sarawak, Malaysia',
-      'deliveryLocation': 'Company ABC Co.',
-      'deliveryAddress': 'Viva City No.999999',
-      'jobStatus': 'Assigned',
-      'startPickupAt': '1 Jan 2024',
-      'endDeliveryAt': '9:00 AM'
-    },
-    {
-      'customerName': 'Company Local',
-      'docNo': 'JQ2402',
-      'pickupLocation': 'Company LocA',
-      'pickupAddress': 'No. 11, Taman 110, Jalan 1111, 94000 Kuching, Sarawak, Malaysia',
-      'deliveryLocation': 'Company LocB',
-      'deliveryAddress': 'No.999 Jalan Matang',
-      'jobStatus': 'Started',
-      'startPickupAt': '1 Jan 2024',
-      'endDeliveryAt': '10:00 AM'
-    },
-    // Add more job orders here
-  ];
+  String searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +54,7 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: const Color.fromRGBO(200, 200, 200, 0.75),
-                    borderRadius: BorderRadius.circular(30.0)
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
                   child: TextField(
                     textAlignVertical: TextAlignVertical.center,
@@ -89,11 +65,14 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
                       border: InputBorder.none,
                     ),
                     onChanged: (value) {
+                      setState(() {
+                        searchQuery = value;
+                      });
                     },
                   ),
                 )
               ],
-            )
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -108,21 +87,44 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: jobOrders.length,
-              itemBuilder: (context, index) {
-                final jobOrder = jobOrders[index];
-                return JobOrderCard(
-                  customerName: jobOrder['customerName'] ?? '',
-                  docNo: jobOrder['docNo'] ?? '',
-                  pickupLocation: jobOrder['pickupLocation'] ?? '',
-                  pickupAddress: jobOrder['pickupAddress'] ?? '',
-                  deliveryLocation: jobOrder['deliveryLocation'] ?? '',
-                  deliveryAddress: jobOrder['deliveryAddress'] ?? '',
-                  jobStatus: jobOrder['jobStatus'] ?? '',
-                  startPickupAt: jobOrder['startPickupAt'] ?? '',
-                  endDeliveryAt: jobOrder['endDeliveryAt'] ?? '',
-                );
+            child: Request(
+              endpoint: '/job_order/api/job-order/get-all-job-order-has-assignment',
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData) {
+                  return const Text('No data found');
+                } else {
+                  final responseData = snapshot.data as Map<String, dynamic>;
+                  final jobOrders = (responseData['rows'] as List).cast<Map<String, dynamic>>();
+                  
+                  final filteredJobOrders = jobOrders.where((jobOrder) {
+                    final customerName = jobOrder['customerName']?.toLowerCase() ?? '';
+                    final docNo = jobOrder['docNo']?.toLowerCase() ?? '';
+                    final query = searchQuery.toLowerCase();
+                    return customerName.contains(query) || docNo.contains(query);
+                  }).toList();
+
+                  return ListView.builder(
+                    itemCount: filteredJobOrders.length,
+                    itemBuilder: (context, index) {
+                      final jobOrder = filteredJobOrders[index];
+                      return JobOrderCard(
+                        customerName: jobOrder['customerName'] ?? '',
+                        docNo: jobOrder['docNo'] ?? '',
+                        pickupLocation: jobOrder['pickupLocation'] ?? '',
+                        pickupAddress: jobOrder['pickupAddress'] ?? '',
+                        deliveryLocation: jobOrder['deliveryLocation'] ?? '',
+                        deliveryAddress: jobOrder['deliveryAddress'] ?? '',
+                        jobStatus: jobOrder['jobStatus'] ?? '',
+                        startPickupAt: jobOrder['startPickupAt'] ?? '',
+                        endDeliveryAt: jobOrder['endDeliveryAt'] ?? '',
+                      );
+                    },
+                  );
+                }
               },
             ),
           ),
@@ -147,14 +149,14 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
         });
       },
       style: ButtonStyle(
-        backgroundColor: selectedJobStatus == index
-            ? WidgetStateProperty.all<Color>(Colors.deepOrange)
-            : null,
+        backgroundColor: WidgetStateProperty.all<Color>(
+          selectedJobStatus == index ? Colors.deepOrange : Colors.transparent,
+        ),
       ),
       child: Text(
         text,
         style: TextStyle(
-          color: selectedJobStatus == index ? Colors.white : null,
+          color: selectedJobStatus == index ? Colors.white : Colors.black,
         ),
       ),
     );

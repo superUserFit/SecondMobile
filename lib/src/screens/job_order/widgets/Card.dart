@@ -4,12 +4,10 @@ import 'package:timelines/timelines.dart';
 class JobOrderCard extends StatelessWidget {
   final String customerName;
   final String docNo;
-
   final String pickupLocation;
   final String pickupAddress;
   final String deliveryLocation;
   final String deliveryAddress;
-
   final String jobStatus;
   final String startPickupAt;
   final String endDeliveryAt;
@@ -62,16 +60,22 @@ class JobOrderCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Text(
-                  jobStatus,
-                  style: TextStyle(
-                    backgroundColor: const Color.fromRGBO(200, 200, 200, 1),
-                    fontWeight: FontWeight.w600,
-                    color: jobStatus == 'Assigned'
-                        ? Colors.blue
-                        : jobStatus == 'Started'
-                            ? Colors.deepOrange
-                            : Colors.grey,
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(200, 200, 200, 1),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Text(
+                    jobStatus,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: jobStatus == 'Assigned'
+                          ? const Color.fromARGB(225, 25, 12, 139)
+                          : jobStatus == 'Started'
+                              ? Colors.deepOrange
+                              : Colors.grey,
+                    ),
                   ),
                 ),
               ],
@@ -86,13 +90,20 @@ class JobOrderCard extends StatelessWidget {
 
   Widget _buildTimeline() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
           width: 40.0,
+          height: 100.0,
           child: FixedTimeline.tileBuilder(
             builder: TimelineTileBuilder(
               indicatorBuilder: (context, index) => DotIndicator(
                 color: index == 0 ? Colors.red : Colors.green,
+                child: Icon(
+                  index == 0 ? Icons.location_on : Icons.location_searching_sharp,
+                  color: Colors.white,
+                  size: 20.0,
+                ),
               ),
               startConnectorBuilder: (context, index) => const SolidLineConnector(
                 color: Colors.grey,
@@ -100,6 +111,7 @@ class JobOrderCard extends StatelessWidget {
               endConnectorBuilder: (context, index) => const SolidLineConnector(
                 color: Colors.grey,
               ),
+              itemExtentBuilder: (context, index) => 50.0,
               itemCount: 2,
             ),
           ),

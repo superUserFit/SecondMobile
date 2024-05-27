@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:e_pod/src/components/navigation/drawers/DrawerNavigator.dart';
+import 'package:e_pod/src/components/navigation/tabs/BottomTabNavigator.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -39,6 +40,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: const Center(
         child: Text('Welcome to the Home Screen'),
+      ),
+      bottomNavigationBar: BottomTabNavigator(
+        currentIndex: selectedTabPage,
+        onTap: (index) {
+          setState(() {
+            selectedTabPage = index;
+          });
+        },
       ),
     );
   }

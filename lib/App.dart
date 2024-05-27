@@ -25,15 +25,15 @@ class _AppScreenState extends State<AppScreen> {
   Widget _getScreen(int index) {
     switch (index) {
       case 0:
-        return HomeScreen();
+        return const HomeScreen();
       case 1:
-        return AlertScreen();
+        return const AlertScreen();
       case 2:
-        return MessageScreen();
+        return const MessageScreen();
       case 3:
-        return ProfileScreen();
+        return const ProfileScreen();
       default:
-        return HomeScreen();
+        return const HomeScreen();
     }
   }
 

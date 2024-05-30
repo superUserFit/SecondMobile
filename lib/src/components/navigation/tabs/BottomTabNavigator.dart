@@ -1,39 +1,79 @@
 import 'package:flutter/material.dart';
 
+import 'package:e_pod/src/screens/home/HomeScreen.dart';
+import 'package:e_pod/src/screens/job_management/JobManagementScreen.dart';
+import 'package:e_pod/src/screens/message/MessageScreen.dart';
+import 'package:e_pod/src/screens/profile/ProfileScreen.dart';
+
 class BottomTabNavigator extends StatelessWidget {
   final int currentIndex;
-  final Function(int) onTap;
+  final Function(int) onTabTapped;
 
-  const BottomTabNavigator({
+  BottomTabNavigator({
     required this.currentIndex,
-    required this.onTap,
+    required this.onTabTapped,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
-      onTap: onTap,
-      selectedItemColor: Colors.deepOrange,
-      unselectedItemColor: Colors.black,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
+    final List<Map<String, dynamic>> items = [
+      {
+        'icon': Icons.home_filled,
+        'label': 'Home',
+        'screen': const HomeScreen()
+      },
+      {
+        'icon': Icons.work_rounded,
+        'label': 'Job Management',
+        'screen': const JobManagementScreen()
+      },
+      {
+        'icon': Icons.mail_rounded,
+        'label': 'Inbox',
+        'screen': const MessageScreen()
+      },
+      {
+        'icon': Icons.person,
+        'label': 'Profile',
+        'screen': const ProfileScreen()
+      },
+    ];
+
+    return BottomAppBar(
+      shape: const CircularNotchedRectangle(),
+      notchMargin: 10,
+      child: SizedBox(
+        height: 60,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: List.generate(items.length, (index) {
+            return Expanded(
+              child: MaterialButton(
+                onPressed: () {
+                  onTabTapped(index);
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      items[index]['icon'],
+                      color: currentIndex == index ? Colors.deepOrange : Colors.black,
+                    ),
+                    Flexible(
+                      child: Text(
+                        items[index]['label'],
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: currentIndex == index ? Colors.deepOrange : Colors.black),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.notifications),
-          label: 'Alert',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.message),
-          label: 'Message',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
-      ],
+      ),
     );
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:e_pod/src/screens/home/HomeScreen.dart';
-import 'package:e_pod/src/screens/alert/AlertScreen.dart';
+import 'package:e_pod/src/screens/job_management/JobManagementScreen.dart';
 import 'package:e_pod/src/screens/message/MessageScreen.dart';
 import 'package:e_pod/src/screens/profile/ProfileScreen.dart';
+
 import 'package:e_pod/src/components/navigation/tabs/BottomTabNavigator.dart';
 
 
@@ -14,36 +16,31 @@ class AppScreen extends StatefulWidget {
 }
 
 class _AppScreenState extends State<AppScreen> {
-  int selectedIndex = 0;
+  int _currentIndex = 0;
 
-  void _onItemTapped(int index) {
+  final List<Widget> _tabScreens = [
+    const HomeScreen(),
+    const JobManagementScreen(),
+    const MessageScreen(),
+    const ProfileScreen(),
+  ];
+
+  void _onTabTapped(int index) {
     setState(() {
-      selectedIndex = index;
+      _currentIndex = index;
     });
-  }
-
-  Widget _getScreen(int index) {
-    switch (index) {
-      case 0:
-        return const HomeScreen();
-      case 1:
-        return const AlertScreen();
-      case 2:
-        return const MessageScreen();
-      case 3:
-        return const ProfileScreen();
-      default:
-        return const HomeScreen();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _getScreen(selectedIndex),
+      body: PageStorage(
+        bucket: PageStorageBucket(),
+        child: _tabScreens[_currentIndex],
+      ),
       bottomNavigationBar: BottomTabNavigator(
-        currentIndex: selectedIndex,
-        onTap: _onItemTapped,
+        currentIndex: _currentIndex,
+        onTabTapped: _onTabTapped,
       ),
     );
   }

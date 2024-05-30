@@ -31,7 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
   getwidget: ^4.0.0
+  google_maps: ^7.1.0
   http: ^1.2.1
+  image_picker: ^1.1.1
   timelines: ^0.1.0
 
 dev_dependencies:

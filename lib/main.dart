@@ -1,4 +1,4 @@
-import 'package:e_pod/App.dart';
+import 'package:e_pod/src/App.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My App',
+      title: 'e-POD',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.deepOrange,

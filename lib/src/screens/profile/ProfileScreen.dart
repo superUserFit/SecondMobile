@@ -14,29 +14,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const DrawerNavigator(),
-      appBar: AppBar(
-        title: const Text(
-          'Home',
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: false,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.orange, Colors.deepOrange],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-      ),
       body: const Center(
         child: Text('This is Profile Screen'),
       ),

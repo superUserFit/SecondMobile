@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timelines/timelines.dart';
 
+
 class JobOrderCard extends StatelessWidget {
   final String customerName;
   final String docNo;
@@ -11,6 +12,8 @@ class JobOrderCard extends StatelessWidget {
   final String jobStatus;
   final String startPickupAt;
   final String endDeliveryAt;
+
+  final VoidCallback? onPressed;
 
   const JobOrderCard({
     Key? key,
@@ -23,11 +26,15 @@ class JobOrderCard extends StatelessWidget {
     required this.jobStatus,
     required this.startPickupAt,
     required this.endDeliveryAt,
+
+    this.onPressed
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return GestureDetector(
+      onTap: onPressed,
+      child: Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -85,6 +92,7 @@ class JobOrderCard extends StatelessWidget {
           ],
         ),
       ),
+      ),
     );
   }
 
@@ -130,6 +138,59 @@ class JobOrderCard extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+
+class JobPageCard extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Color iconColor;
+
+  final VoidCallback? onPressed;
+
+  const JobPageCard({
+    Key? key,
+    required this.icon,
+    required this.iconColor,
+    required this.text,
+
+    this.onPressed
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Color textColor = iconColor;
+    return SizedBox(
+      height: 70,
+      child: InkWell(
+        onTap: onPressed,
+        child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        elevation: 5,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 80, color: iconColor),
+              const SizedBox(height: 10),
+              Text(
+                text,
+                style: TextStyle(
+                  fontSize: 20.0, 
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+              ],
+            ),
+          ),
+        ),
+      )
     );
   }
 }

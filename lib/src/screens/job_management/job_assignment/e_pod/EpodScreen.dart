@@ -1,6 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:flutter/material.dart';
+
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'package:e_pod/src/components/camera/CameraScreen.dart';
 
 
 class EpodScreen extends StatefulWidget {
@@ -12,6 +16,13 @@ class EpodScreen extends StatefulWidget {
 
 class _EpodState extends State<EpodScreen> {
   final List<File> _selectedImages = [];
+  static const LatLng _currentLocation = LatLng(1.466424, 110.32912);
+
+  late GoogleMapController googleMapController;
+
+  void _onGoogleMapCreated(GoogleMapController controller) {
+    googleMapController = controller;
+  }
 
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -23,6 +34,42 @@ class _EpodState extends State<EpodScreen> {
       });
     }
   }
+
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext buildContext) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Photo Library'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.camera_alt_rounded),
+                title: const Text("Camera"),
+                onTap: () {
+                  setState(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const CameraScreen()));
+                  });
+                }
+              )
+            ],
+          )
+        );
+      }
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +91,6 @@ class _EpodState extends State<EpodScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Photo section
               const Text(
                 "Photo 3/12",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -52,24 +98,63 @@ class _EpodState extends State<EpodScreen> {
               const SizedBox(height: 8.0),
               Row(
                 children: [
-                  Expanded(
-                    child: Wrap(
-                      spacing: 8.0,
-                      runSpacing: 8.0,
-                      children: List.generate(
-                        3,
-                        (index) => Container(
-                          width: 100,
-                          height: 100,
-                          color: Colors.grey,
-                          child: Center(
-                            child: Text('Photo ${index + 1}'),
+            Expanded(
+              child: Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: _selectedImages.map((image) {
+                  return Stack(
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                          image: DecorationImage(
+                            image: FileImage(image),
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedImages.remove(image);
+                            });
+                          },
+                          child: Container(
+                            width: 24,
+                            height: 24,
+                            decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      'X',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
                     ),
                   ),
-                  Container(
+
+                  GestureDetector(
+                    onTap: () {
+                      _showPicker(context);
+                    },
+                    child: Container(
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
@@ -91,15 +176,16 @@ class _EpodState extends State<EpodScreen> {
                         ),
                       ],
                     ),
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 16.0),
-              
+
               // Delivery details
-              const Card(
+               Card(
                 child: ListTile(
-                  title: Text(
+                  title: const Text(
                     "Delivery Details",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
@@ -110,14 +196,27 @@ class _EpodState extends State<EpodScreen> {
                       SizedBox(height: 4),
                       Text("Coordinates: 1.466424, 110.32912"),
                       SizedBox(height: 4),
-                      Image(
-                        image: NetworkImage('https://via.placeholder.com/150'), // Replace with actual map
-                      ),
+
+                      SizedBox(
+                        height: 320,
+                        child: GoogleMap(
+                          onMapCreated: _onGoogleMapCreated,
+                          zoomGesturesEnabled: false,
+                          zoomControlsEnabled: false,
+                          markers: {
+                            Marker(
+                              markerId: MarkerId("_deliveryLocation"),
+                              icon: BitmapDescriptor.defaultMarker,
+                              position: _currentLocation
+                            )
+                          },
+                          initialCameraPosition: CameraPosition(target: _currentLocation, zoom: 20)),
+                      )
                     ],
                   ),
                 ),
               ),
-              
+
               // Date & Time
               const Card(
                 child: ListTile(
@@ -128,7 +227,7 @@ class _EpodState extends State<EpodScreen> {
                   subtitle: Text("2024-01-01 5:00:00 PM"),
                 ),
               ),
-              
+
               // Remark
               const Card(
                 child: ListTile(
@@ -141,7 +240,7 @@ class _EpodState extends State<EpodScreen> {
                   ),
                 ),
               ),
-              
+
               // Recipient details
               const Card(
                 child: ListTile(
@@ -170,7 +269,7 @@ class _EpodState extends State<EpodScreen> {
                   ),
                 ),
               ),
-              
+
               // Submit button
               const SizedBox(height: 16.0),
               Center(

@@ -78,7 +78,9 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
           SizedBox(
             height: 60,
             child: Center(
-              child: Row(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildTabButton('All', 0),
@@ -86,70 +88,59 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
                     _buildTabButton('Assigned', 2),
                     _buildTabButton('Started', 3),
                   ],
+                ),
               ),
-            )
+            ),
           ),
 
           Expanded(
             child: Request(
               endpoint: '/job_order/api/job-order/get-all-job-order-has-assignment?jobStatus=$selectedJobStatus',
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else if (!snapshot.hasData) {
-                  return const Text('No data found');
-                } else {
-                  final responseData = snapshot.data as Map<String, dynamic>;
-                  final rows = responseData['rows'] as List? ?? [];
+                final responseData = snapshot.data as Map<String, dynamic>;
+                final rows = responseData['rows'] as List? ?? [];
+                final jobOrders = rows.cast<Map<String, dynamic>>();
 
-                  final jobOrders = rows.cast<Map<String, dynamic>>();
-
-                  if (jobOrders.isEmpty) {
-                    return const Center(
-                      child: Text('No available Job Order'),
-                    );
-                  }
-
-                  List<Map<String, dynamic>> filteredJobOrders = [];
-
-                  if (searchQuery.contains(RegExp(r'[a-zA-Z]'))) {
-                    filteredJobOrders = jobOrders.where((jobOrder) {
-                      final customerName = jobOrder['customerName']?.toLowerCase() ?? '';
-                      final query = searchQuery.toLowerCase();
-                      return customerName.contains(query);
-                    }).toList();
-                  } else {
-                    filteredJobOrders = jobOrders;
-                  }
-
-                  return ListView.builder(
-                    itemCount: filteredJobOrders.length,
-                    itemBuilder: (context, index) {
-                      final jobOrder = filteredJobOrders[index];
-
-                      return JobOrderCard(
-                        customerName: jobOrder['customerName'] ?? '',
-                        docNo: jobOrder['docNo'] ?? '',
-                        pickupLocation: jobOrder['pickupLocation'] ?? '',
-                        pickupAddress: jobOrder['pickupAddress'] ?? '',
-                        deliveryLocation: jobOrder['deliveryLocation'] ?? '',
-                        deliveryAddress: jobOrder['deliveryAddress'] ?? '',
-                        jobStatus: jobOrder['jobStatus'] ?? '',
-                        startPickupAt: jobOrder['startPickupAt'] ?? '',
-                        endDeliveryAt: jobOrder['endDeliveryAt'] ?? '',
-
-                        onPressed: () {
-                          Navigator.push(
-                            context, 
-                            MaterialPageRoute(builder: (context) => JobDetailsSection(id: jobOrder['UUID']))
-                          );
-                        }
-                      );
-                    },
+                if (jobOrders.isEmpty) {
+                  return const Center(
+                    child: Text('No available Job Order'),
                   );
                 }
+
+                List<Map<String, dynamic>> filteredJobOrders = [];
+                if (searchQuery.contains(RegExp(r'[a-zA-Z]'))) {
+                  filteredJobOrders = jobOrders.where((jobOrder) {
+                    final customerName = jobOrder['customerName']?.toLowerCase() ?? '';
+                    final query = searchQuery.toLowerCase();
+                    return customerName.contains(query);
+                  }).toList();
+                } else {
+                  filteredJobOrders = jobOrders;
+                }
+
+                return ListView.builder(
+                  itemCount: filteredJobOrders.length,
+                  itemBuilder: (context, index) {
+                    final jobOrder = filteredJobOrders[index];
+                    return JobOrderCard(
+                      customerName: jobOrder['customerName'] ?? '',
+                      docNo: jobOrder['docNo'] ?? '',
+                      pickupLocation: jobOrder['pickupLocation'] ?? '',
+                      pickupAddress: jobOrder['pickupAddress'] ?? '',
+                      deliveryLocation: jobOrder['deliveryLocation'] ?? '',
+                      deliveryAddress: jobOrder['deliveryAddress'] ?? '',
+                      jobStatus: jobOrder['jobStatus'] ?? '',
+                      startPickupAt: jobOrder['startPickupAt'] ?? '',
+                      endDeliveryAt: jobOrder['endDeliveryAt'] ?? '',
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: (context) => JobDetailsSection(jobOrderId: jobOrder['jobOrder']))
+                        );
+                      }
+                    );
+                  },
+                );
               },
             ),
           ),

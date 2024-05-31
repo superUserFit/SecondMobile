@@ -275,20 +275,32 @@ class _EpodState extends State<EpodScreen> {
               Center(
                 child: SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepOrange,
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Colors.deepOrange, Colors.orange],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
-                    onPressed: () {
-                      // Handle submit action
-                    },
-                    child: const Text(
-                      'Submit',
-                      style: TextStyle(fontSize: 16),
+                    child: InkWell(
+                      onTap: () {
+                        // Handle submit action
+                      },
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),

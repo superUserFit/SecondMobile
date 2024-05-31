@@ -162,6 +162,7 @@ class JobPageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color textColor = iconColor;
+
     return SizedBox(
       height: 70,
       child: InkWell(
@@ -181,10 +182,11 @@ class JobPageCard extends StatelessWidget {
               Text(
                 text,
                 style: TextStyle(
-                  fontSize: 20.0, 
+                  fontSize: 16.0,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
               ],
             ),

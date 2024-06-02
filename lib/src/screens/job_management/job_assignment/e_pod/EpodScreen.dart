@@ -77,7 +77,7 @@ class _EpodState extends State<EpodScreen> {
       appBar: AppBar(
         title: const Text(
           'Complete EPOD Details',
-          style: TextStyle(color: Colors.deepOrange),
+          style: TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.w500),
         ),
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(
@@ -91,62 +91,66 @@ class _EpodState extends State<EpodScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Photo 3/12",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              Text(
+                "${_selectedImages.length}/12",
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 8.0),
-              Row(
+
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
                 children: [
-            Expanded(
-              child: Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: _selectedImages.map((image) {
-                  return Stack(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          image: DecorationImage(
-                            image: FileImage(image),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 4,
-                        right: 4,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedImages.remove(image);
-                            });
-                          },
-                          child: Container(
-                            width: 24,
-                            height: 24,
-                            decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      'X',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                      ..._selectedImages.map((image) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Stack(
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                image: DecorationImage(
+                                  image: FileImage(image),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedImages.remove(image);
+                                  });
+                                },
+                                child: Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: const BoxDecoration(color: Colors.red,shape: BoxShape.circle),
+                                    child: const Center(
+                                      child: Text(
+                                        'X',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         );
-                      }).toList(),
+                        }).toList(),
+                      ],
                     ),
                   ),
 
@@ -180,6 +184,7 @@ class _EpodState extends State<EpodScreen> {
                   ),
                 ],
               ),
+              ),
               const SizedBox(height: 16.0),
 
               // Delivery details
@@ -193,9 +198,9 @@ class _EpodState extends State<EpodScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("Address: No. 99, Taman999, Jalan 9999, 99999 Kuching, Sarawak, Malaysia."),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text("Coordinates: 1.466424, 110.32912"),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
 
                       SizedBox(
                         height: 320,
@@ -218,27 +223,46 @@ class _EpodState extends State<EpodScreen> {
               ),
 
               // Date & Time
-              const Card(
-                child: ListTile(
-                  title: Text(
-                    "Date & Time",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text("2024-01-01 5:00:00 PM"),
-                ),
-              ),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const SizedBox(width: 125, child: Text("Date & Time", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color.fromRGBO(96, 96, 96, 1)))),
+                          Text("2024-05-11", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))
+                        ],
+                      ),
 
-              // Remark
-              const Card(
-                child: ListTile(
-                  title: Text(
-                    "Remark",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    "Delivery Done.\nNo issues encountered during delivery process.\nCustomer acknowledged receipt of goods.",
-                  ),
-                ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: const Divider(height: 1, color: Color.fromRGBO(200, 200, 200, 0.8)),
+                      ),
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 75,
+                            width: 125,
+                            child: Text("Remark", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color.fromRGBO(96, 96, 96, 1)))
+                          ),
+                          Expanded(
+                            child: TextField(
+                              maxLines: 5,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.all(4.0),
+                                disabledBorder: InputBorder.none,
+                                hintText: "Enter your remarks here"
+                              ),
+                            )
+                          )
+                        ],
+                      )
+                    ],
+                  )
+                )
               ),
 
               // Recipient details
@@ -255,10 +279,6 @@ class _EpodState extends State<EpodScreen> {
                       SizedBox(height: 4),
                       Text("NRIC: -"),
                       SizedBox(height: 16),
-                      Image(
-                        image: NetworkImage('https://via.placeholder.com/150'), // Replace with actual signature image
-                        height: 100,
-                      ),
                       Center(
                         child: Text(
                           "Tap to sign",

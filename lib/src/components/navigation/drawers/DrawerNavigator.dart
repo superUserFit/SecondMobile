@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:e_pod/src/screens/home/HomeScreen.dart';
-import 'package:e_pod/src/screens/job_management/job_order/JobOrderScreen.dart';
+import 'package:e_pod/src/screens/job_management/job_order/view/JobOrderScreen.dart';
 
 import 'DrawerItem.dart';
 

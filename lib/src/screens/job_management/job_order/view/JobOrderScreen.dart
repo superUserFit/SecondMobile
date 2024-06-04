@@ -1,7 +1,8 @@
-import 'package:e_pod/src/screens/job_management/job_order/job_details.section.dart';
 import 'package:flutter/material.dart';
+
 import 'package:e_pod/src/screens/job_management/widgets/Card.dart';
-import 'package:e_pod/src/components/api/Request.dart';
+import 'package:e_pod/src/screens/job_management/job_order/view/JobDetails.dart';
+import 'package:e_pod/src/components/utils/Request.dart';
 
 class JobOrderScreen extends StatefulWidget {
   const JobOrderScreen({Key? key}) : super(key: key);

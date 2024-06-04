@@ -59,7 +59,7 @@ class _EpodState extends State<EpodScreen> {
                   setState(() {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const CameraScreen()));
+                      MaterialPageRoute(builder: (context) => CameraScreen()));
                   });
                 }
               )

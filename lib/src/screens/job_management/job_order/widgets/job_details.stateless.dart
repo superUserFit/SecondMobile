@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:e_pod/src/components/api/Request.dart';
-
 class DocumentDetails extends StatelessWidget {
   final dynamic data;
 
@@ -384,6 +382,43 @@ class MoreDetails extends StatelessWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class BottomSheetTab extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2, // Number of tabs
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: TabBar(
+            tabs: [
+              Tab(text: "Supervisor"),
+              Tab(text: "Job Card"),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            Center(child: Text("This is Supervisor tab")),
+            Center(child: Text("This is Job Card tab")),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+          ],
+          currentIndex: 0, // Set the initial index to the tab you want to show
+          onTap: (int index) {
+            // Handle the tap on the bottom navigation bar
+            // For example, you can push a new screen or change the tab controller index
+          },
         ),
       ),
     );

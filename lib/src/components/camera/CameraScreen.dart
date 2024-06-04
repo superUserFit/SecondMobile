@@ -51,10 +51,26 @@ class _CameraState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: isCameraInitialized
           ? Stack(
               children: [
-                CameraPreview(cameraController),
+                Center(
+                  child: AspectRatio(
+                    aspectRatio: cameraController.value.aspectRatio,
+                    child: Transform.rotate(
+                      angle: 3.14 / 2,
+                      child: CameraPreview(cameraController),
+                    ),
+                  ),
+                ),
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -87,10 +103,7 @@ class _CameraState extends State<CameraScreen> {
     return Align(
       alignment: alignment,
       child: Container(
-        margin: const EdgeInsets.only(
-          left: 20,
-          bottom: 20,
-        ),
+        margin: const EdgeInsets.all(20),
         height: 50,
         width: 50,
         decoration: const BoxDecoration(

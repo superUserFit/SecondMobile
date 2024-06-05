@@ -100,126 +100,184 @@ class _ItemCardState extends State<ItemDetailsCard> {
 //  END: ItemDetailsCard
 
 
-//  START: DraggableBottomSheet
-class DraggableBottomSheet extends StatefulWidget {
-  final Widget child;
-
-  const DraggableBottomSheet({ 
-    Key? key,
-
-    required this.child
-  }): super(key: key);
-
-  @override
-  _BottomSheetState createState() => _BottomSheetState();
-}
-
-class _BottomSheetState extends State<DraggableBottomSheet> {
-  final bottomSheet = GlobalKey();
-  final controller = DraggableScrollableController();
-
-  @override
-  void initState() {
-    super.initState();
-    controller.addListener(onChanged);
-  }
-
-  void onChanged() {
-    final currentSize = controller.size;
-    if(currentSize <= 0.05) collapse();
-  }
-
-  void collapse() => animatedSheet(getSheet.snapSizes!.first);
-  void anchor() => animatedSheet(getSheet.snapSizes!.last);
-  void expand() => animatedSheet(getSheet.maxChildSize);
-  void hide() => animatedSheet(getSheet.minChildSize);
-
-  void animatedSheet(double size) {
-    controller.animateTo(
-      size, 
-      duration: const Duration(milliseconds: 50), 
-      curve: Curves.easeInOut
-    );
-  }
-
-  DraggableScrollableSheet get getSheet => (bottomSheet.currentWidget as DraggableScrollableSheet);
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (builder, constraint) {
-      return DraggableScrollableSheet(
-        key: bottomSheet,
-        initialChildSize: 0.5,
-        maxChildSize: 0.8,
-        minChildSize: 0,
-        expand: true,
-        snap: true,
-        controller: controller,
-        snapSizes: [50/constraint.maxHeight],
-        builder: (BuildContext context, ScrollController scrollController) {
-          return DecoratedBox(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.orange, Colors.deepOrange],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight
-              ),
-              borderRadius: const BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-            ),
-
-            child: CustomScrollView(
-              controller: scrollController,
-              slivers: [
-                topButtonIndicator(),
-                SliverToBoxAdapter(
-                  child: widget.child,
-                )
-              ],
-            ),
-          );
-        }
-      );
-    });
-  }
-
-  SliverToBoxAdapter topButtonIndicator() {
-    return SliverToBoxAdapter(
-      child: SizedBox(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            SizedBox(
-              child: Center(
-                child: Wrap(children: <Widget>[
-                  Container(
-                    width: 100,
-                    margin: const EdgeInsets.symmetric(vertical: 20.0),
-                    height: 8.0,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    )),
-                ]))),
-          ])),
-    );
-  }
-}
-//  END: DraggableBottomSheet
 
 
 //  START: SupervisorTab
-// class SupervisorTab extends StatefulWidget {
-//   @override
-//   _SupervisorTabState createState() => _SupervisorTabState();
-// }
+class SupervisorTab extends StatefulWidget {
+  final List<dynamic> jobOrderHasSupervisors;
 
-// class _SupervisorTabState extends State<SupervisorTab> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       child: 
-//     );
-//   }
-// }
+  const SupervisorTab({
+    Key? key,
+    required this.jobOrderHasSupervisors,
+  }) : super(key: key);
+
+  @override
+  _SupervisorTabState createState() => _SupervisorTabState();
+}
+
+class _SupervisorTabState extends State<SupervisorTab> {
+  @override
+  Widget build(BuildContext context) {
+    dynamic? _selectedSupervisor;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  children: [
+                    ...widget.jobOrderHasSupervisors.map((supervisor) =>
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedSupervisor = supervisor;
+                          });
+                        },
+                        child: _buildSupervisorBadge(supervisor['fullNameName'] ?? ''),
+                      )
+                    ),
+                    Container(
+                      margin: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Add your onPressed logic here
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(12.0),
+                        ),
+                        child: const Icon(Icons.add),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16.0),
+        Expanded(
+          child: Card(
+            color: Colors.white,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50.0),
+                  topRight: Radius.circular(50.0),
+                ),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const SizedBox(
+                          width: 125,
+                          child: Text("Location: ", style: TextStyle(fontWeight: FontWeight.w600, color: Color.fromRGBO(96, 96, 96, 0.8))),
+                        ),
+                        Text(_selectedSupervisor['locationName'] ?? '')
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 4.0),
+                      child: const Divider(color: Color.fromRGBO(96, 96, 96, 0.8)),
+                    ),
+                    Row(
+                      children: [
+                        const SizedBox(
+                          width: 125,
+                          child: Text("Full Name: ", style: TextStyle(fontWeight: FontWeight.w600, color: Color.fromRGBO(96, 96, 96, 0.8))),
+                        ),
+                        Text(_selectedSupervisor['fullNameName'] ?? '')
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 4.0),
+                      child: const Divider(color: Color.fromRGBO(96, 96, 96, 0.8)),
+                    ),
+                    Row(
+                      children: [
+                        const SizedBox(
+                          width: 125,
+                          child: Text("Title: ", style: TextStyle(fontWeight: FontWeight.w600, color: Color.fromRGBO(96, 96, 96, 0.8))),
+                        ),
+                        Text(_selectedSupervisor['title'] ?? '')
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 4.0),
+                      child: const Divider(color: Color.fromRGBO(96, 96, 96, 0.8)),
+                    ),
+                    Row(
+                      children: [
+                        const SizedBox(
+                          width: 125,
+                          child: Text("Gender: ", style: TextStyle(fontWeight: FontWeight.w600, color: Color.fromRGBO(96, 96, 96, 0.8))),
+                        ),
+                        Text(_selectedSupervisor['gender'] ?? '')
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 4.0),
+                      child: const Divider(color: Color.fromRGBO(96, 96, 96, 0.8)),
+                    ),
+                    Row(
+                      children: [
+                        const SizedBox(
+                          width: 125,
+                          child: Text("Phone No: ", style: TextStyle(fontWeight: FontWeight.w600, color: Color.fromRGBO(96, 96, 96, 0.8))),
+                        ),
+                        Text(_selectedSupervisor['phoneNo'] ?? '')
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 4.0),
+                      child: const Divider(color: Color.fromRGBO(96, 96, 96, 0.8)),
+                    ),
+                    Row(
+                      children: [
+                        const SizedBox(
+                          width: 125,
+                          child: Text("Return Reason: ", style: TextStyle(fontWeight: FontWeight.w600, color: Color.fromRGBO(96, 96, 96, 0.8))),
+                        ),
+                        Text("For fun")
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 4.0),
+                      child: const Divider(color: Color.fromRGBO(96, 96, 96, 0.8)),
+                    ),
+
+                    const SizedBox(height: 50.0)
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSupervisorBadge(String supervisor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        decoration: const BoxDecoration(
+          color: Colors.white60,
+          borderRadius: BorderRadius.all(Radius.circular(16.0)),
+        ),
+        child: Text(supervisor),
+      ),
+    );
+  }
+}

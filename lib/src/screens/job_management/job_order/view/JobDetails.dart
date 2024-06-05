@@ -101,11 +101,49 @@ class _JobDetailsSectionState extends State<JobDetailsSection> {
 
       bottomNavigationBar: SizedBox(
         width: double.infinity,
-        // height: 50,
-        child: DraggableBottomSheet(
-          child: BottomSheetTab()
+        child: ElevatedButton(
+          style: ButtonStyle(
+            padding: WidgetStateProperty.all(EdgeInsets.zero),
+            backgroundColor: WidgetStateProperty.all(Colors.transparent),
+          ),
+          onPressed: () => showModalBottomSheet(
+            enableDrag: true,
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => BottomSheetTab(jobOrderId: widget.jobOrderId),
+          ),
+          child: Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.orange, Colors.deepOrange],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: SizedBox(
+              height: 50.0,
+              child: Center(
+                child: SizedBox(
+                  width: 50,
+                  child: Container(
+                    width: 50,
+                    height: 5,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(16.0))
+                    ),
+                  )
+                )
+              ),
+            ),
+          )
         )
-      ),
+      )
     );
   }
 }

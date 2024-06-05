@@ -1,3 +1,5 @@
+import 'package:e_pod/src/components/utils/Request.dart';
+import 'package:e_pod/src/screens/job_management/job_order/widgets/job_details.stateful.dart';
 import 'package:flutter/material.dart';
 
 class DocumentDetails extends StatelessWidget {
@@ -390,35 +392,71 @@ class MoreDetails extends StatelessWidget {
 
 
 class BottomSheetTab extends StatelessWidget {
+  final dynamic jobOrderId;
+
+  const BottomSheetTab({ 
+    Key? key,
+
+    required this.jobOrderId
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2, // Number of tabs
-      child: Scaffold(
-        appBar: AppBar(
-          bottom: TabBar(
-            tabs: [
-              Tab(text: "Supervisor"),
-              Tab(text: "Job Card"),
+  late dynamic jobOrderHasSupervisors = [];
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.85,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.orange, Colors.deepOrange],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            bottom: TabBar(
+              indicator: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorWeight: 10,
+              indicatorColor: Colors.transparent,
+              labelColor: Colors.deepOrange,
+              labelStyle: const TextStyle(fontWeight: FontWeight.w700),
+              unselectedLabelColor: Colors.white,
+              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700),
+              tabs: const [
+                Tab(text: "Supervisor"),
+                Tab(text: "Job Card"),
+              ],
+            ),
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          body: TabBarView(
+            children: [
+              Request(
+                endpoint: '/job_order/api/job-order/get-update-job-order-has-supervisor-data?id=$jobOrderId', 
+                builder: ((context, snapshot) {
+                  final dynamic responseData = snapshot.data;
+                  
+                  jobOrderHasSupervisors = responseData['rows'];
+                  return SupervisorTab(jobOrderHasSupervisors: jobOrderHasSupervisors);
+                }) 
+              ),
+              Center(child: Text("This is Job Card tab")),
             ],
           ),
-        ),
-        body: TabBarView(
-          children: [
-            Center(child: Text("This is Supervisor tab")),
-            Center(child: Text("This is Job Card tab")),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-          ],
-          currentIndex: 0, // Set the initial index to the tab you want to show
-          onTap: (int index) {
-            // Handle the tap on the bottom navigation bar
-            // For example, you can push a new screen or change the tab controller index
-          },
         ),
       ),
     );

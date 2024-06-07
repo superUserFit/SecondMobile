@@ -318,10 +318,10 @@ class MoreDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String containerNo = data['containerNo'];
-    final String containerSize = data['containerSize'];
-    final String containerType = data['containerType'];
-    final String deliveryAddress = data['deliveryAddress'];
+    final String containerNo = data['containerNo'] ?? '';
+    final String containerSize = data['containerSize'] ?? '';
+    final String containerType = data['containerType'] ?? '';
+    final String deliveryAddress = data['deliveryAddress'] ?? '';
 
     return Card(
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
@@ -447,14 +447,16 @@ class BottomSheetTab extends StatelessWidget {
             children: [
               Request(
                 endpoint: '/job_order/api/job-order/get-update-job-order-has-supervisor-data?id=$jobOrderId', 
+                method: 'GET',
                 builder: ((context, snapshot) {
                   final dynamic responseData = snapshot.data;
                   
                   jobOrderHasSupervisors = responseData['rows'];
-                  return SupervisorTab(jobOrderHasSupervisors: jobOrderHasSupervisors);
+                  return SupervisorTab(jobOrderHasSupervisors: jobOrderHasSupervisors, jobOrderId: jobOrderId);
                 }) 
               ),
-              Center(child: Text("This is Job Card tab")),
+
+              JobCardTab()
             ],
           ),
         ),

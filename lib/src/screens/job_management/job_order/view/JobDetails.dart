@@ -43,6 +43,7 @@ class _JobDetailsSectionState extends State<JobDetailsSection> {
                 children: [
                   Request(
                     endpoint: "/job_order/api/job-order/get-update-job-order-data?id=${widget.jobOrderId}",
+                    method: 'GET',
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());

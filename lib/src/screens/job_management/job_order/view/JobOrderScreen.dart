@@ -97,6 +97,7 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
           Expanded(
             child: Request(
               endpoint: '/job_order/api/job-order/get-all-job-order-has-assignment?jobStatus=$selectedJobStatus',
+              method: 'GET',
               builder: (context, snapshot) {
                 final responseData = snapshot.data as Map<String, dynamic>;
                 final rows = responseData['rows'] as List? ?? [];
@@ -145,7 +146,6 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
               },
             ),
           ),
-
         ],
       ),
     );

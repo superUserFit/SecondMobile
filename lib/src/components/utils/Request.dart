@@ -1,32 +1,64 @@
 import 'package:flutter/material.dart';
-
 import 'package:http/http.dart' as http;
+
+import 'dart:io';
 import 'dart:convert';
 import 'package:e_pod/src/config.dart';
 
 class Request extends StatelessWidget {
   final String endpoint;
-  final Widget Function(BuildContext context, AsyncSnapshot snapshot) builder;
+  final String method;
+  final dynamic builder;
+
+  final dynamic body;
 
   const Request({
     Key? key,
     required this.endpoint,
-    required this.builder,
+    required this.method,
+
+    this.builder,
+    this.body
   }) : super(key: key);
 
   Future<dynamic> fetchData() async {
+    dynamic response;
+
     try {
-      final response = await http.get(Uri.parse('$baseURL$endpoint'));
+      switch(method) {
+        case 'POST':
+          if (body != null) {
+            var request = http.MultipartRequest(
+              'POST',
+              Uri.parse('$baseURL$endpoint'),
+            );
+
+            body!.forEach((key, value) {
+              request.fields[key] = value.toString();
+            });
+
+            var streamedResponse = await request.send();
+            response = await http.Response.fromStream(streamedResponse);
+          } else {
+            throw Exception('POST body is required');
+          }
+          break;
+        case 'GET':
+          response = await http.get(Uri.parse('$baseURL$endpoint'));
+          break;
+        default:
+          response = null;
+          break;
+      }
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
-        throw Exception('Failed to load data: ${response.statusCode}');
+        throw HttpException(response.body ?? 'Failed to load data: ${response.statusCode}');
       }
-    } catch (e) {
-      throw Exception('Failed to load data: $e');
+    } catch (error) {
+      throw Exception('An error occurs: $error');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

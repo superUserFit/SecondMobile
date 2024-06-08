@@ -32,6 +32,33 @@ class JobOrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, Color> jobStatusColor = {
+      'background': Colors.white,
+      'text': Colors.black
+    };
+
+    switch(jobStatus) {
+      case 'Acknowledged':
+        jobStatusColor['background'] = Colors.grey;
+        jobStatusColor['text'] = Colors.white;
+        break;
+
+      case 'Started':
+        jobStatusColor['background'] = Colors.yellow;
+        jobStatusColor['text'] = Colors.white;
+        break;
+
+      case 'Assigned':
+        jobStatusColor['background'] = const Color.fromRGBO(120, 120, 120, 0.8);
+        jobStatusColor['text'] = Colors.white;
+        break;
+
+      default:
+        jobStatusColor['background'] = Colors.white;
+        jobStatusColor['text'] = Colors.black;
+        break;
+    }
+
     return GestureDetector(
       onTap: onPressed,
       child: Card(
@@ -77,11 +104,8 @@ class JobOrderCard extends StatelessWidget {
                     jobStatus,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: jobStatus == 'Assigned'
-                          ? const Color.fromARGB(225, 25, 12, 139)
-                          : jobStatus == 'Started'
-                              ? Colors.deepOrange
-                              : Colors.grey,
+                      color: jobStatusColor['text'],
+                      backgroundColor: jobStatusColor['background']
                     ),
                   ),
                 ),
@@ -193,6 +217,132 @@ class JobPageCard extends StatelessWidget {
           ),
         ),
       )
+    );
+  }
+}
+
+
+class JobAssignmentCard extends StatelessWidget {
+  final String customerName;
+  final String pickupLocation;
+  final String pickupAddress;
+  final String deliveryLocation;
+  final String deliveryAddress;
+  final String jobStatus;
+  final String startPickupAt;
+  final String endDeliveryAt;
+
+  final VoidCallback? onPressed;
+
+  const JobAssignmentCard({
+    Key? key,
+    required this.customerName,
+    required this.pickupLocation,
+    required this.pickupAddress,
+    required this.deliveryLocation,
+    required this.deliveryAddress,
+    required this.jobStatus,
+    required this.startPickupAt,
+    required this.endDeliveryAt,
+
+    this.onPressed
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              customerName,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+                color: Colors.deepOrange,
+                letterSpacing: 1.5,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(200, 200, 200, 1),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Text(
+                    jobStatus,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: jobStatus == 'Assigned'
+                          ? const Color.fromARGB(225, 25, 12, 139)
+                          : jobStatus == 'Started'
+                              ? Colors.deepOrange
+                              : Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8.0),
+            _buildTimeline(),
+          ],
+        ),
+      ),
+      ),
+    );
+  }
+
+  Widget _buildTimeline() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 40.0,
+          height: 100.0,
+          child: FixedTimeline.tileBuilder(
+            builder: TimelineTileBuilder(
+              indicatorBuilder: (context, index) => DotIndicator(
+                color: index == 0 ? Colors.red : Colors.green,
+                child: Icon(
+                  index == 0 ? Icons.location_on : Icons.location_searching_sharp,
+                  color: Colors.white,
+                  size: 20.0,
+                ),
+              ),
+              startConnectorBuilder: (context, index) => const SolidLineConnector(
+                color: Colors.grey,
+              ),
+              endConnectorBuilder: (context, index) => const SolidLineConnector(
+                color: Colors.grey,
+              ),
+              itemExtentBuilder: (context, index) => 50.0,
+              itemCount: 2,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8.0),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(pickupLocation, style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(pickupAddress),
+              const SizedBox(height: 16.0),
+              Text(deliveryLocation, style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(deliveryAddress),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

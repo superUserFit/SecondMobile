@@ -1,8 +1,10 @@
 import 'package:e_pod/src/components/utils/UseShowToast.dart';
+import 'package:e_pod/src/services/job_order/controller/JobOrderController.dart';
 import 'package:e_pod/src/screens/job_management/job_order/view/JobDetails.dart';
+import 'package:e_pod/src/services/user/controller/UserController.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:e_pod/src/components/utils/Request.dart';
+import 'package:e_pod/src/components/utils/Request.dart' as request;
 
 class AddSupervisor extends StatefulWidget {
   final String jobOrderId;
@@ -16,20 +18,10 @@ class AddSupervisor extends StatefulWidget {
 class _AddSupervisorState extends State<AddSupervisor> {
   late List<dynamic> _users = [];
   ValueNotifier<List<dynamic>> selectedUsersNotifier = ValueNotifier([]);
+  final jobOrderController = JobOrderController();
+  final userController = UserController();
 
-  late Map<String, dynamic> params = {};
   late Map<String, dynamic> formData = {};
-
-  @override
-  void initState() {
-    super.initState();
-
-    params['param[limit]'] = 100;
-    params['param[offset]'] = 0;
-    params['param[filter]'] = {};
-    params['param[order]'] = 'ASC';
-    params['param[valid]'] = 1;
-  }
 
   void _selectUser(dynamic user) {
     final List<dynamic> updatedSelectedUsers = List.from(selectedUsersNotifier.value);
@@ -64,17 +56,19 @@ class _AddSupervisorState extends State<AddSupervisor> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => Request(
-          endpoint: '/job_order/api/job-order/update-job-order-has-supervisor-data?id=$jobOrderId',
-          method: 'POST',
-          body: formData,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
+        builder: (context) => request.Builder<dynamic>(
+          future: jobOrderController.updateJobOrderHasSupervisor(jobOrderId, formData),
+          builder: (context, response) {
+            if(response.isNotEmpty) {
+              UseToast.showToast(                
+                message: 'Supervisor saved successfully',
+                status: 'success'
+              );
               return JobDetailsSection(jobOrderId: jobOrderId);
             }
             return const Center(child: CircularProgressIndicator());
           },
-        ),
+        )
       ),
     );
   }
@@ -174,63 +168,58 @@ class _AddSupervisorState extends State<AddSupervisor> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Request(
-                      endpoint: '/user/api/user/get-index-user',
-                      method: 'POST',
-                      body: params,
-                      builder: ((context, snapshot) {
-                        if (snapshot.data['rows'] is List) {
-                          _users = snapshot.data['rows'];
-                          _users.sort((a, b) => (a['fullName'] ?? '').compareTo(b['fullName'] ?? ''));
+                    request.Builder(
+                      future: userController.getIndexUser(),
+                      builder: (context, users) {
+                        _users = users;
+                        _users.sort((a, b) => (a['fullName'] ?? '').compareTo(b['fullName'] ?? ''));
 
-                          return GroupedListView<dynamic, String>(
-                            shrinkWrap: true,
-                            elements: _users,
-                            groupBy: (element) {
-                              String fullName = element['fullName'] ?? '';
-                              if (fullName.isEmpty) {
-                                return '';
-                              }
-                              return fullName.substring(0, 1).toUpperCase();
-                            },
-                            groupSeparatorBuilder: (String groupByValue) {
-                              return Container(
-                                alignment: Alignment.centerLeft,
+                        return GroupedListView<dynamic, String>(
+                          shrinkWrap: true,
+                          elements: _users,
+                          groupBy: (element) {
+                            String fullName = element['fullName'] ?? '';
+                            if (fullName.isEmpty) {
+                              return '';
+                            }
+                            return fullName.substring(0, 1).toUpperCase();
+                          },
+                          groupSeparatorBuilder: (String groupByValue) {
+                            return Container(
+                              alignment: Alignment.centerLeft,
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                groupByValue,
+                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                            );
+                          },
+
+                          itemBuilder: (context, dynamic element) {
+                            return GestureDetector(
+                              onTap: () => _selectUser(element),
+                              child: Container(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  groupByValue,
-                                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                margin: const EdgeInsets.only(bottom: 8.0),
+                                decoration: BoxDecoration(
+                                  color: selectedUsersNotifier.value.contains(element)
+                                      ? Colors.blue[50]
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(16.0),
                                 ),
-                              );
-                            },
-                            itemBuilder: (context, dynamic element) {
-                              return GestureDetector(
-                                onTap: () => _selectUser(element),
-                                child: Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  margin: const EdgeInsets.only(bottom: 8.0),
-                                  decoration: BoxDecoration(
-                                    color: selectedUsersNotifier.value.contains(element)
-                                        ? Colors.blue[50]
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(16.0),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Text(element['fullName'] ?? ''),
-                                      const SizedBox(width: 4.0),
-                                      Text(element['username'] ?? '',
-                                          style: const TextStyle(color: Colors.grey)),
-                                    ],
-                                  ),
+                                child: Row(
+                                  children: [
+                                    Text(element['fullName'] ?? ''),
+                                    const SizedBox(width: 4.0),
+                                    Text(element['username'] ?? '',
+                                        style: const TextStyle(color: Colors.grey)),
+                                  ],
                                 ),
-                              );
-                            },
-                          );
-                        } else {
-                          return const Center(child: Text('Error: Unexpected response data format'));
-                        }
-                      }),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     )
                   ],
                 ),

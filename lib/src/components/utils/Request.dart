@@ -5,21 +5,16 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:e_pod/src/config.dart';
 
-class Request extends StatelessWidget {
+class Request {
   final String endpoint;
   final String method;
-  final dynamic builder;
-
   final dynamic body;
 
-  const Request({
-    Key? key,
+  Request({
     required this.endpoint,
     required this.method,
-
-    this.builder,
-    this.body
-  }) : super(key: key);
+    this.body,
+  });
 
   Future<dynamic> fetchData() async {
     dynamic response;
@@ -56,36 +51,39 @@ class Request extends StatelessWidget {
         throw HttpException(response.body ?? 'Failed to load data: ${response.statusCode}');
       }
     } catch (error) {
-      throw Exception('An error occurs: $error');
+      throw Exception('An error occurred: $error');
     }
   }
+}
+
+class Builder<T> extends StatelessWidget {
+  final Future<T> future;
+  final Widget Function(BuildContext, T) builder;
+
+  const Builder({
+    Key? key,
+    required this.future,
+    required this.builder,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: fetchData(),
+    return FutureBuilder<T>(
+      future: future,
       builder: (context, snapshot) {
-        if(snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Colors.white,
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if(snapshot.hasError){
-          return Text("Error: ${snapshot.error}");
-        } else if(!snapshot.hasData) {
-          return const Text("No data found");
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (!snapshot.hasData) {
+          return const Center(child: Text("No data available"));
         } else {
-          return builder(context, snapshot);
+          return builder(context, snapshot.data as T);
         }
       },
     );
   }
 }
-
 
 class Promise extends StatelessWidget {
   final List<String> endpoints;

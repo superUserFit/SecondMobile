@@ -402,7 +402,6 @@ class BottomSheetTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  late dynamic jobOrderHasSupervisors = [];
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
@@ -445,18 +444,9 @@ class BottomSheetTab extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              Request(
-                endpoint: '/job_order/api/job-order/get-update-job-order-has-supervisor-data?id=$jobOrderId', 
-                method: 'GET',
-                builder: ((context, snapshot) {
-                  final dynamic responseData = snapshot.data;
-                  
-                  jobOrderHasSupervisors = responseData['rows'];
-                  return SupervisorTab(jobOrderHasSupervisors: jobOrderHasSupervisors, jobOrderId: jobOrderId);
-                }) 
-              ),
+              SupervisorTab(jobOrderId: jobOrderId),
 
-              JobCardTab()
+              JobCardTab(jobOrderId: jobOrderId)
             ],
           ),
         ),

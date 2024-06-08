@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:e_pod/src/components/utils/Request.dart';
+import 'package:e_pod/src/components/utils/Request.dart' as request;
 import 'package:e_pod/src/screens/job_management/job_order/widgets/job_details.stateful.dart';
 import 'package:e_pod/src/screens/job_management/job_order/widgets/job_details.stateless.dart';
-
+import 'package:e_pod/src/services/job_order/controller/JobOrderController.dart';
 class JobDetailsSection extends StatefulWidget {
   final String jobOrderId;
   const JobDetailsSection({Key? key, required this.jobOrderId}) : super(key: key);
@@ -24,6 +24,8 @@ class _JobDetailsSectionState extends State<JobDetailsSection> {
 
   @override
   Widget build(BuildContext context) {
+    final jobOrderController = JobOrderController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Job Details', style: TextStyle(color: Colors.deepOrange)),
@@ -41,22 +43,9 @@ class _JobDetailsSectionState extends State<JobDetailsSection> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Request(
-                    endpoint: "/job_order/api/job-order/get-update-job-order-data?id=${widget.jobOrderId}",
-                    method: 'GET',
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      }
-                      if (!snapshot.hasData) {
-                        return const Center(child: Text('No data found'));
-                      }
-
-                      final jobOrder = snapshot.data;
-
+                  request.Builder(
+                    future: jobOrderController.getUpdateJobOrder(widget.jobOrderId),
+                    builder: (context, jobOrder) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -92,7 +81,7 @@ class _JobDetailsSectionState extends State<JobDetailsSection> {
                         ],
                       );
                     },
-                  ),
+                  )
                 ],
               ),
             ),

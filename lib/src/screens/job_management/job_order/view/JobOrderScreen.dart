@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:e_pod/src/screens/job_management/widgets/Card.dart';
 import 'package:e_pod/src/screens/job_management/job_order/view/JobDetails.dart';
-import 'package:e_pod/src/components/utils/Request.dart';
+import 'package:e_pod/src/services/job_order/controller/JobOrderController.dart';
+import 'package:e_pod/src/components/utils/Request.dart' as request;
 
 class JobOrderScreen extends StatefulWidget {
   const JobOrderScreen({Key? key}) : super(key: key);
@@ -25,6 +26,8 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final jobOrderController = JobOrderController();
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60.0),
@@ -54,14 +57,19 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
                         color: const Color.fromRGBO(200, 200, 200, 0.75),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      child: const TextField(
+                      child: TextField(
                         textAlignVertical: TextAlignVertical.center,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           contentPadding: EdgeInsets.symmetric(vertical: 4.0),
                           hintText: "Search Job Order...",
                           prefixIcon: Icon(Icons.search),
                           border: InputBorder.none,
                         ),
+                        onChanged: (value) {
+                          setState(() {
+                            searchQuery = value;
+                          });
+                        },
                       ),
                     ),
                   ),
@@ -71,8 +79,6 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
           ),
         ),
       ),
-
-
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -93,31 +99,36 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
               ),
             ),
           ),
-
           Expanded(
-            child: Request(
-              endpoint: '/job_order/api/job-order/get-all-job-order-has-assignment?jobStatus=$selectedJobStatus',
-              method: 'GET',
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: jobOrderController.getAllJobOrderHasAssignment(selectedJobStatus),
               builder: (context, snapshot) {
-                final responseData = snapshot.data as Map<String, dynamic>;
-                final rows = responseData['rows'] as List? ?? [];
-                final jobOrders = rows.cast<Map<String, dynamic>>();
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
+                final jobOrders = snapshot.data!;
                 if (jobOrders.isEmpty) {
                   return const Center(
-                    child: Text('No available Job Order'),
+                    child: Text("No available Job Order"),
                   );
                 }
 
                 List<Map<String, dynamic>> filteredJobOrders = [];
-                if (searchQuery.contains(RegExp(r'[a-zA-Z]'))) {
+                if (searchQuery.isNotEmpty) {
                   filteredJobOrders = jobOrders.where((jobOrder) {
                     final customerName = jobOrder['customerName']?.toLowerCase() ?? '';
                     final query = searchQuery.toLowerCase();
-                    return customerName.contains(query);
+                    return customerName.startsWith(query);
                   }).toList();
                 } else {
                   filteredJobOrders = jobOrders;
+                }
+
+                if(filteredJobOrders.isEmpty) {
+                  return const Center(
+                    child: Text('No available Job Order'),
+                  );
                 }
 
                 return ListView.builder(
@@ -136,10 +147,12 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
                       endDeliveryAt: jobOrder['endDeliveryAt'] ?? '',
                       onPressed: () {
                         Navigator.push(
-                          context, 
-                          MaterialPageRoute(builder: (context) => JobDetailsSection(jobOrderId: jobOrder['jobOrder']))
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => JobDetailsSection(jobOrderId: jobOrder['jobOrder']),
+                          ),
                         );
-                      }
+                      },
                     );
                   },
                 );
@@ -150,7 +163,6 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
       ),
     );
   }
-
 
   Widget _buildTabButton(String text, int index) {
     return Padding(

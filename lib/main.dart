@@ -2,6 +2,7 @@ import 'package:e_pod/src/App.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 

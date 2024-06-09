@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -36,7 +37,9 @@ class _EpodState extends State<EpodScreen> {
   }
 
 
-  void _showPicker(context) {
+  void _showPicker(context) async {
+    final cameras = await availableCameras();
+
     showModalBottomSheet(
       context: context,
       builder: (BuildContext buildContext) {
@@ -59,7 +62,7 @@ class _EpodState extends State<EpodScreen> {
                   setState(() {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => CameraScreen()));
+                      MaterialPageRoute(builder: (context) => CameraScreen(cameras: cameras)));
                   });
                 }
               )

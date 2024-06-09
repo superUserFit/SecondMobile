@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/services.dart';
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({Key? key}) : super(key: key);
+  final List<CameraDescription> cameras;
+
+  const CameraScreen({super.key, required this.cameras});
 
   @override
   State<CameraScreen> createState() => _CameraState();
@@ -18,11 +21,18 @@ class _CameraState extends State<CameraScreen> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight
+    ]);
     startCamera(cameraDirection);
   }
 
   Future<void> startCamera(int direction) async {
     try {
+      var orientation;
       cameras = await availableCameras();
 
       cameraController = CameraController(
@@ -31,12 +41,29 @@ class _CameraState extends State<CameraScreen> {
         enableAudio: false,
       );
 
+      switch(direction) {
+        case 0:
+          orientation = DeviceOrientation.landscapeRight;
+          break;
+
+        case 1:
+          orientation = DeviceOrientation.landscapeLeft;
+          break;
+
+        default:
+          orientation = DeviceOrientation.landscapeRight;
+          break;
+      }
+
       await cameraController.initialize();
+      await cameraController.lockCaptureOrientation(orientation);
+
       if (!mounted) return;
 
       setState(() {
         isCameraInitialized = true;
       });
+
     } catch (error) {
       print(error);
     }
@@ -51,25 +78,13 @@ class _CameraState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
       body: isCameraInitialized
           ? Stack(
               children: [
-                Center(
-                  child: AspectRatio(
-                    aspectRatio: cameraController.value.aspectRatio,
-                    child: Transform.rotate(
-                      angle: 3.14 / 2,
-                      child: CameraPreview(cameraController),
-                    ),
-                  ),
+                SizedBox(
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: CameraPreview(cameraController),
                 ),
                 GestureDetector(
                   onTap: () {

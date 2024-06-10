@@ -6,10 +6,9 @@ class DocumentDetails extends StatelessWidget {
   final dynamic data;
 
   const DocumentDetails({
-    Key? key,
-
+    super.key,
     required this.data
-  }): super(key: key);
+  });
 
 
   @override
@@ -93,10 +92,10 @@ class CustomerDetails extends StatelessWidget {
   final dynamic data;
 
   const CustomerDetails({
-    Key? key,
+    super.key,
 
     required this.data
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -180,9 +179,10 @@ class ItemDetails extends StatelessWidget {
   final dynamic data;
 
   const ItemDetails({
-    Key? key,
+    super.key,
+    
     required this.data,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -200,10 +200,11 @@ class ItemDetails extends StatelessWidget {
             final String itemUOM = item['itemUOM'] ?? '';
 
             return Card(
-              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(0.0),
                 child: ExpansionTile(
+                  backgroundColor: itemType == 'Stock' ? Colors.orangeAccent : Colors.greenAccent,
+                  collapsedBackgroundColor: itemType == 'Stock' ? Colors.orangeAccent : Colors.greenAccent,
                   title: Text(itemType),
                   children: [
                     Padding(
@@ -395,10 +396,10 @@ class BottomSheetTab extends StatelessWidget {
   final dynamic jobOrderId;
 
   const BottomSheetTab({ 
-    Key? key,
-
+    super.key,
+    
     required this.jobOrderId
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

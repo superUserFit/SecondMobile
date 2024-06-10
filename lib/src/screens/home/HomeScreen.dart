@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:e_pod/src/screens/job_management/job_assignment/e_pod/EpodScreen.dart';
+import 'package:e_pod/src/screens/job_management/job_assignment/view/EpodScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

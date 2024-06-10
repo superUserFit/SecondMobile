@@ -14,7 +14,7 @@ class ItemDetailsCard extends StatefulWidget {
   final String jobOrderId;
 
   const ItemDetailsCard({
-    Key? key,
+    super.key,
 
     required this.jobOrderId
   }); 
@@ -208,6 +208,7 @@ class _SupervisorTabState extends State<SupervisorTab> {
         const SizedBox(height: 16.0),
         Expanded(
           child: Card(
+            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(50.0), topRight: Radius.circular(50.0))),
             color: Colors.white,
             child: Container(
               width: double.infinity,

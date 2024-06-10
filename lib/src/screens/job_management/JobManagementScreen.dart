@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:e_pod/src/screens/job_management/job_assignment/JobAssignmentScreen.dart';
+import 'package:e_pod/src/screens/job_management/job_assignment/view/JobAssignmentScreen.dart';
 import 'package:e_pod/src/screens/job_management/job_order/view/JobOrderScreen.dart';
 import 'package:e_pod/src/screens/job_management/widgets/Card.dart';
 

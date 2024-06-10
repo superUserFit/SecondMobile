@@ -111,4 +111,34 @@ class JobOrderController {
 
     return response;
   }
+
+
+  Future<Map<String, dynamic>> getUpdateJobOrderHasAssignment(String jobOrderHasAssignmentId) async {
+    final request = Request(
+      endpoint: '/job_order/api/job-order/get-update-job-order-has-assignment?id=$jobOrderHasAssignmentId', 
+      method: 'GET'
+    );
+
+    final jobOrderHasAssignment = await request.fetchData();
+
+    return jobOrderHasAssignment.cast<String, dynamic>();
+  }
+
+
+  Future<List<Map<String, dynamic>>> getUpdateJobOrderHasAssignee(String jobOrderId) async {
+    final request = Request(
+      endpoint: '/job_order/api/job-order/get-update-job-order-has-assignee-data?id=$jobOrderId', 
+      method: 'GET'
+    );
+
+    final response = await request.fetchData();
+
+    if (response == null || response['rows'] == null) {
+      return [];
+    }
+
+    final List jobOrderHasAssignees = response['rows'];
+
+    return jobOrderHasAssignees.cast<Map<String, dynamic>>();
+  }
 }

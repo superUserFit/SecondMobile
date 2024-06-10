@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:e_pod/src/screens/home/HomeScreen.dart';
-import 'package:e_pod/src/screens/job_management/JobManagementScreen.dart';
+import 'package:e_pod/src/screens/job_management/job_order/view/JobOrderScreen.dart';
 import 'package:e_pod/src/screens/message/MessageScreen.dart';
 import 'package:e_pod/src/screens/profile/ProfileScreen.dart';
 
@@ -18,14 +18,9 @@ class BottomTabNavigator extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> items = [
       {
-        'icon': Icons.home_filled,
-        'label': 'Home',
-        'screen': const HomeScreen()
-      },
-      {
         'icon': Icons.work_rounded,
-        'label': 'Job Management',
-        'screen': const JobManagementScreen()
+        'label': 'Job Order',
+        'screen': const JobOrderScreen()
       },
       {
         'icon': Icons.mail_rounded,

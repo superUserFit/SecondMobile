@@ -1,3 +1,4 @@
+import 'package:e_pod/src/screens/job_management/job_assignment/view/JobAssignmentScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_pod/src/screens/home/HomeScreen.dart';
 import 'package:e_pod/src/screens/job_management/job_order/view/JobOrderScreen.dart';
@@ -36,7 +37,13 @@ class DrawerNavigator extends StatelessWidget {
             DrawerItem(
               icon: Icons.business_center_rounded,
               name: 'Job Order',
-              onPressed: () => onItemPressed(context, index: 1))
+              onPressed: () => onItemPressed(context, index: 1)
+            ),
+            DrawerItem(
+              icon: Icons.assignment_sharp,
+              name: 'Job Assignment',
+              onPressed: () => onItemPressed(context, index: 2)
+            )
           ],
         ),
       ),
@@ -57,6 +64,13 @@ class DrawerNavigator extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const JobOrderScreen()),
+        );
+        break;
+
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const JobAssignmentScreen())
         );
         break;
     }

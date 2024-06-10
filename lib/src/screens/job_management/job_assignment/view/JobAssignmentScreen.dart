@@ -1,3 +1,4 @@
+import 'package:e_pod/src/components/navigation/drawers/DrawerNavigator.dart';
 import 'package:e_pod/src/screens/job_management/job_assignment/view/JobAssignmentDetails.dart';
 import 'package:e_pod/src/screens/job_management/widgets/Card.dart';
 import 'package:flutter/material.dart';
@@ -29,60 +30,58 @@ class _JobAssignmentState extends State<JobAssignmentScreen> {
     final jobOrderController = JobOrderController();
 
     return Scaffold(
+      drawer: const DrawerNavigator(),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60.0),
         child: AppBar(
-          automaticallyImplyLeading: false,
+          title: const Text('Job Assignment', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),),
           flexibleSpace: Container(
             decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(28.0), bottomRight: Radius.circular(28.0)),
               gradient: LinearGradient(
                 colors: [Colors.orange, Colors.deepOrange],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight
               )
             ),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 45.0, left: 16.0, right: 16.0, bottom: 16),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color.fromRGBO(200, 200, 200, 0.75),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: TextField(
-                        textAlignVertical: TextAlignVertical.center,
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 4.0),
-                          hintText: "Search...",
-                          prefixIcon: Icon(Icons.search),
-                          border: InputBorder.none,
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            searchQuery = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
       ),
-      
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(200, 200, 200, 0.75),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: TextField(
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 4.0),
+                        hintText: "Search...",
+                        prefixIcon: Icon(Icons.search),
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          searchQuery = value;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           SizedBox(
             height: 60,
             child: Center(
@@ -138,17 +137,17 @@ class _JobAssignmentState extends State<JobAssignmentScreen> {
                   itemBuilder: (context, index) {
                     final jobAssignment = filteredJobOrderHasAssignments[index];
                     return JobAssignmentCard(
-                      customerName: jobAssignment['customerName'] ?? '', 
-                      pickupLocation: jobAssignment['pickupLocation'] ?? '', 
-                      pickupAddress: jobAssignment['pickupAddress'] ?? '', 
-                      deliveryLocation: jobAssignment['deliveryLocation'] ?? '', 
-                      deliveryAddress: jobAssignment['deliveryAddress'] ?? '', 
-                      jobStatus: jobAssignment['jobStatus'] ?? '', 
-                      startPickupAt: jobAssignment['startPickupAt'] ?? '', 
+                      customerName: jobAssignment['customerName'] ?? '',
+                      pickupLocation: jobAssignment['pickupLocation'] ?? '',
+                      pickupAddress: jobAssignment['pickupAddress'] ?? '',
+                      deliveryLocation: jobAssignment['deliveryLocation'] ?? '',
+                      deliveryAddress: jobAssignment['deliveryAddress'] ?? '',
+                      jobStatus: jobAssignment['jobStatus'] ?? '',
+                      startPickupAt: jobAssignment['startPickupAt'] ?? '',
                       endDeliveryAt: jobAssignment['endDeliveryAt'] ?? '',
                       onPressed: () {
                         Navigator.push(
-                          context, 
+                          context,
                           MaterialPageRoute(builder: (context) => JobAssignmentDetails(jobOrderHasAssignmentId: jobAssignment['UUID'], jobOrderId: jobAssignment['jobOrder'],))
                         );
                       },

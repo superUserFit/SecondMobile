@@ -1,7 +1,7 @@
+import 'package:e_pod/src/components/navigation/drawers/DrawerNavigator.dart';
 import 'package:flutter/material.dart';
+import 'package:e_pod/src/screens/job_management/job_order/view/JobOrderScreen.dart';
 
-import 'package:e_pod/src/screens/home/HomeScreen.dart';
-import 'package:e_pod/src/screens/job_management/JobManagementScreen.dart';
 import 'package:e_pod/src/screens/message/MessageScreen.dart';
 import 'package:e_pod/src/screens/profile/ProfileScreen.dart';
 
@@ -19,8 +19,7 @@ class _AppScreenState extends State<AppScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _tabScreens = [
-    const HomeScreen(),
-    const JobManagementScreen(),
+    const JobOrderScreen(),
     const MessageScreen(),
     const ProfileScreen(),
   ];

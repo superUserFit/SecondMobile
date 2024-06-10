@@ -1,9 +1,11 @@
+import 'package:e_pod/src/components/navigation/drawers/DrawerNavigator.dart';
+import 'package:e_pod/src/components/navigation/tabs/BottomTabNavigator.dart';
 import 'package:flutter/material.dart';
 
 import 'package:e_pod/src/screens/job_management/widgets/Card.dart';
 import 'package:e_pod/src/screens/job_management/job_order/view/JobDetails.dart';
 import 'package:e_pod/src/services/job_order/controller/JobOrderController.dart';
-import 'package:e_pod/src/components/utils/Request.dart' as request;
+
 
 class JobOrderScreen extends StatefulWidget {
   const JobOrderScreen({Key? key}) : super(key: key);
@@ -29,59 +31,60 @@ class _JobOrderScreenState extends State<JobOrderScreen> {
     final jobOrderController = JobOrderController();
 
     return Scaffold(
+      drawer: const DrawerNavigator(),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60.0),
         child: AppBar(
-          automaticallyImplyLeading: false,
+          title: Container(
+            margin: const EdgeInsets.only(left: 8.0),
+            child: const Text('Job Order', style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white)),
+          ),
           flexibleSpace: Container(
             decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(28.0), bottomRight: Radius.circular(28.0)),
               gradient: LinearGradient(
                 colors: [Colors.orange, Colors.deepOrange],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 45.0, left: 16.0, right: 16.0, bottom: 16),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color.fromRGBO(200, 200, 200, 0.75),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: TextField(
-                        textAlignVertical: TextAlignVertical.center,
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 4.0),
-                          hintText: "Search Job Order...",
-                          prefixIcon: Icon(Icons.search),
-                          border: InputBorder.none,
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            searchQuery = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(200, 200, 200, 0.75),
+                      borderRadius: BorderRadius.circular(24.0),
+                    ),
+                    child: TextField(
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 4.0),
+                        hintText: "Search Job Order...",
+                        prefixIcon: Icon(Icons.search),
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          searchQuery = value;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           SizedBox(
             height: 60,
             child: Center(
